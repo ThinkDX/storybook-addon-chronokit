@@ -54,6 +54,24 @@ export const PurchaseError: Story = {
   },
 }
 
+
+// Story showing purchase error state
+export const PurchaseErrorBug: Story = {
+  args: {
+    input: ''
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        http.post('https://jsonplaceholder.typicode.com/posts', async () => {
+          await delay(500)
+          return new HttpResponse(null, { status: 500 })
+        }),
+      ],
+    },
+  },
+}
+
 // Story showing slow network response
 export const SlowNetwork: Story = {
   parameters: {
