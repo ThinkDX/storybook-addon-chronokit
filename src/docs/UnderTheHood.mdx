@@ -1,0 +1,37 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks'
+import * as TimerStories from '../demo/TimerMechanisms.stories'
+
+<Meta title="Guide/Under the Hood" />
+
+# Under the hood
+
+Freezing `Date` alone isn't enough — most time-driven UI also schedules work
+with `setTimeout`, `setInterval`, or `requestAnimationFrame`. Chronokit's
+decorator replaces **all of them**:
+
+- `Date` (and `Date.now()`) return the mocked time.
+- `setTimeout` / `setInterval` are rescheduled so their delays scale with
+  `clockSpeed`.
+- `requestAnimationFrame` / `cancelAnimationFrame` are mocked and scaled too, so
+  even animation loops follow the mocked clock.
+
+## Proof: every mechanism stays in control
+
+Each card below is a stopwatch that reads the mocked clock, but re-renders on a
+cadence driven by exactly one scheduling API. With the clock running fast, all
+three climb together:
+
+<Canvas of={TimerStories.AllThree} />
+
+Freeze the clock and **every** card stays pinned at `0.0s` — including the
+`requestAnimationFrame` one, which would otherwise animate forever. If chronokit
+ever stopped controlling a mechanism, that card would visibly break away from the
+others (and the story's test would fail):
+
+<Canvas of={TimerStories.AllThreeFrozen} />
+
+## Isolation
+
+The decorator captures the real `Date` and timer functions up front and restores
+them when the story unmounts, so a mocked clock in one story never leaks into the
+next.

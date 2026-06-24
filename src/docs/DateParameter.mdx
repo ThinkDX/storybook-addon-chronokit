@@ -1,0 +1,45 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Guide/The date Parameter" />
+
+# The `date` parameter
+
+Everything chronokit does is controlled by one story parameter: `date`. Set it on
+a story, a component's `meta`, or globally in `.storybook/preview`.
+
+## Shorthand
+
+Pass a date directly to freeze the clock at that instant:
+
+```ts
+parameters: { date: '2025-06-01T12:00:00' } // string, number (ms), or Date
+```
+
+## Full form
+
+```ts
+parameters: {
+  date: {
+    now: new Date('2025-06-01T12:00:00').getTime(),
+    canProgress: true,
+    clockSpeed: 30,
+  },
+}
+```
+
+| Field         | Type                      | Default | Description                                                                 |
+| ------------- | ------------------------- | ------- | --------------------------------------------------------------------------- |
+| `now`         | `string \| number \| Date`| —       | The mocked "current" time. Required.                                        |
+| `canProgress` | `boolean`                 | `false` | `false` freezes the clock at `now`; `true` lets it advance.                 |
+| `clockSpeed`  | `number`                  | `1`     | Real-time multiplier while progressing — e.g. `30` makes time run 30× faster. |
+
+## How it behaves
+
+- **Frozen** (`canProgress: false`) — `Date.now()`, `new Date()`, timers and
+  animation frames all see a clock pinned at `now`. The UI never changes on its
+  own. See **Static Time**.
+- **Progressing** (`canProgress: true`) — the clock advances from `now`. With
+  `clockSpeed` it advances faster than wall time. See **Controlled Dynamic Time**.
+
+The decorator restores the real clock when the story unmounts, so stories stay
+isolated from one another.

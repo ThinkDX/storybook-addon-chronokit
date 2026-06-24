@@ -1,0 +1,36 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks'
+import * as CountdownStories from '../demo/Countdown.stories'
+import * as FlashSaleStories from '../demo/FlashSale.stories'
+
+<Meta title="Guide/Controlled Dynamic Time" />
+
+# Controlled dynamic time
+
+Set `canProgress: true` to let the clock advance from `now`. Add `clockSpeed` to
+make it advance faster than wall time, so time-based transitions you'd normally
+wait minutes (or hours) for play out in seconds.
+
+```ts
+export const FastForward = {
+  parameters: {
+    date: { now: BASE_TIME, canProgress: true, clockSpeed: 20 },
+  },
+}
+```
+
+A five-minute countdown at `clockSpeed: 20` finishes in about fifteen real
+seconds, passing through its warning and critical thresholds on the way:
+
+<Canvas of={CountdownStories.FastForward} />
+
+## A full lifecycle in seconds
+
+The flash sale lasts six minutes. At `clockSpeed: 30` you watch the whole
+arc — healthy → amber warning → red critical → "sale ended" — in roughly twelve
+seconds:
+
+<Canvas of={FlashSaleStories.WatchItExpire} />
+
+This is the same component and the same code paths that run in production; only
+the clock is faster. That makes it practical to exercise expiry, scheduling, and
+animation logic in a story instead of mocking timers by hand in a test.

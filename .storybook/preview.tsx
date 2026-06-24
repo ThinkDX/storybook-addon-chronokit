@@ -11,6 +11,22 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    options: {
+      storySort: {
+        order: [
+          'Introduction',
+          'Guide',
+          [
+            'The date Parameter',
+            'Static Time',
+            'Controlled Dynamic Time',
+            'Under the Hood',
+          ],
+          'Demo',
+          ['Countdown', 'FlashSale', 'Timer Mechanisms'],
+        ],
+      },
+    },
   },
 }
 

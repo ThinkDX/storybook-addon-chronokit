@@ -1,0 +1,51 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks'
+import * as FlashSaleStories from '../demo/FlashSale.stories'
+
+<Meta title="Introduction" />
+
+# storybook-addon-chronokit
+
+**Mock time in your Storybook stories.** Chronokit replaces the global clock so
+a story can render at any moment you choose — frozen for a deterministic
+screenshot, or fast-forwarded so you can watch a minutes-long flow play out in
+seconds.
+
+It's a single preview decorator driven by one story parameter:
+
+```ts
+parameters: {
+  date: {
+    now: new Date('2025-06-01T12:00:00').getTime(),
+    canProgress: true, // false = frozen
+    clockSpeed: 30,     // optional real-time multiplier
+  },
+}
+```
+
+Here's a flash-sale banner running on a clock sped up 30×, so the full
+healthy → warning → critical → ended lifecycle takes about 12 seconds:
+
+<Canvas of={FlashSaleStories.WatchItExpire} />
+
+## Why mock time?
+
+Anything that renders differently depending on "what time is it now?" is painful
+to develop and review against the real clock:
+
+- **Countdowns and timers** — you'd have to wait for them to reach interesting states.
+- **Relative timestamps** ("2 minutes ago") — never look the same twice.
+- **Expiry / scheduling UI** — sales, sessions, holds, tokens.
+
+Chronokit makes those states **deterministic** (freeze the clock) or
+**fast** (speed it up) without touching your component code.
+
+## This site is the documentation
+
+Use the sidebar as a tutorial:
+
+1. **Guide → The `date` Parameter** — the full API.
+2. **Guide → Static Time** — freezing the clock for deterministic UI.
+3. **Guide → Controlled Dynamic Time** — letting the clock run, fast.
+4. **Guide → Under the Hood** — how every scheduling API stays under control.
+
+The **Demo** section holds the live, interactive examples those pages reference.

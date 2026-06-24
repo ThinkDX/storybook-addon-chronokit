@@ -1,0 +1,40 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks'
+import * as FlashSaleStories from '../demo/FlashSale.stories'
+
+<Meta title="Guide/Static Time" />
+
+# Static time
+
+Set `canProgress: false` (or just pass a bare date) to **freeze** the clock. The
+component renders exactly as it would at that instant and never moves — ideal for
+deterministic screenshots, visual-regression snapshots, and documenting a
+specific state.
+
+```ts
+export const FinalMinute = {
+  args: { endsAt: SALE_END },
+  parameters: {
+    date: { now: SALE_END - 45 * 1000, canProgress: false },
+  },
+}
+```
+
+By pinning `now` 45 seconds before the sale ends, the banner is **always**
+captured in its red, final-minute state:
+
+<Canvas of={FlashSaleStories.FrozenInFinalMinute} />
+
+## Document every state by changing only `now`
+
+Because the component reads the (frozen) clock, you can capture any state just by
+moving the frozen moment — no special props, no waiting. Same component, plenty
+of time left:
+
+<Canvas of={FlashSaleStories.FrozenEarly} />
+
+...and frozen just after the deadline, showing the ended state:
+
+<Canvas of={FlashSaleStories.FrozenAfterEnd} />
+
+Three deterministic snapshots of one component, differing only in the frozen
+`now`.
