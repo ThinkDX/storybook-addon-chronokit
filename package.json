@@ -1,20 +1,26 @@
 {
   "name": "@thinkdx/storybook-addon-chronokit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publishConfig": {
     "access": "public"
   },
   "description": "Mock time in your Storybook stories — freeze the clock or fast-forward it with a single decorator.",
   "keywords": [
     "storybook",
+    "storybook-addon",
     "storybook-addons",
-    "addon",
+    "test",
     "date",
     "time",
     "clock",
-    "mock",
-    "testing"
+    "mock"
   ],
+  "storybook": {
+    "displayName": "Chronokit",
+    "supportedFrameworks": [
+      "react"
+    ]
+  },
   "homepage": "https://thinkdx.github.io/storybook-addon-chronokit/",
   "bugs": "https://github.com/ThinkDX/storybook-addon-chronokit/issues",
   "repository": {
