@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-`storybook-addon-chronokit` — a Storybook 10 addon for mocking time in stories. The
+`storybook-addon-chronokit` — a Storybook addon (supports Storybook 9+) for mocking time in stories. The
 core is a preview decorator (`mockDateDecorator`) that replaces the global `Date` (and
 `setTimeout`/`setInterval`/`requestAnimationFrame`) so stories can freeze time, let it
 progress, or run a sped-up clock. The `Countdown` and `FlashSale` components are demo
@@ -27,7 +27,9 @@ The addon and the demo are kept in separate spaces so it's clear what ships:
 - `src/demo/` - **example code, NOT part of the addon**
   - `FlashSale.tsx` - real-world showcase (static + dynamic time)
   - `Countdown.tsx` - countdown demo component (requestAnimationFrame-based), stories, tests
+  - `TimerMechanisms.tsx` - one stopwatch per scheduling API, proving the addon controls all three
   - `datetime.ts` - time-remaining calculation helper
+- `src/docs/` - **MDX tutorial pages** (Introduction + Guide/\*); Storybook is the docs site
 - `.storybook/` - Storybook config; `preview.tsx` registers the decorator globally
 - `tests/` - test setup files
 
@@ -102,5 +104,7 @@ npm run test:run   # Unit + Storybook tests
 
 ## Notes
 
-- Docs/autodocs are disabled globally via `tags: ['!autodocs']` in `preview.tsx`
-- Not yet structured for npm publish (no build/`exports`/README) — that work is pending
+- Autodocs are disabled via `tags: ['!autodocs']`; documentation is authored as explicit `.mdx` pages in `src/docs/`.
+- The mock replaces **global** `Date`/timers, so multiple examples on one docs page would share (and clobber) a single clock. `preview.tsx` sets `docs.story.inline: false` so each embedded example renders in its own iframe with an isolated clock.
+- Storybook deploys to GitHub Pages on push to `main` via `.github/workflows/deploy-storybook.yml` (https://thinkdx.github.io/storybook-addon-chronokit/).
+- The published addon is just `src/addon`. npm packaging (build/`exports`/published artifact) is still in progress.

@@ -22,5 +22,10 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["vitest.config.ts", ".storybook/**/*.ts", ".storybook/**/*.tsx"]
+  "include": [
+    "vitest.config.ts",
+    "tsup.config.ts",
+    ".storybook/**/*.ts",
+    ".storybook/**/*.tsx"
+  ]
 }
