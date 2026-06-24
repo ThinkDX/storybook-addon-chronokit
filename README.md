@@ -43,7 +43,7 @@ scheduling APIs (`setTimeout`, `setInterval`, `requestAnimationFrame`).
 > setup below shows the intended API.
 
 ```sh
-npm install --save-dev storybook-addon-chronokit
+npm install --save-dev @thinkdx/storybook-addon-chronokit
 ```
 
 ## Setup
@@ -53,7 +53,7 @@ Register the decorator globally in `.storybook/preview`:
 ```ts
 // .storybook/preview.ts
 import type { Preview } from '@storybook/react-vite'
-import { mockDateDecorator } from 'storybook-addon-chronokit'
+import { mockDateDecorator } from '@thinkdx/storybook-addon-chronokit'
 
 const preview: Preview = {
   decorators: [mockDateDecorator],
