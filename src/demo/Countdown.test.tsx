@@ -1,8 +1,8 @@
 import { act, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { CountdownComplex } from './CountdownComplex'
+import { Countdown } from './Countdown'
 
-describe('CountdownComplex', () => {
+describe('Countdown', () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })
@@ -16,7 +16,7 @@ describe('CountdownComplex', () => {
     vi.setSystemTime(now)
     const target = now + 30 * 1000 // 30 seconds from now
 
-    render(<CountdownComplex datetime={target} />)
+    render(<Countdown datetime={target} />)
 
     expect(screen.getByTestId('countdown')).toHaveTextContent('30s')
   })
@@ -26,7 +26,7 @@ describe('CountdownComplex', () => {
     vi.setSystemTime(now)
     const target = now + (5 * 60 + 30) * 1000 // 5 minutes 30 seconds
 
-    render(<CountdownComplex datetime={target} />)
+    render(<Countdown datetime={target} />)
 
     expect(screen.getByTestId('countdown')).toHaveTextContent('5m 30s')
   })
@@ -36,7 +36,7 @@ describe('CountdownComplex', () => {
     vi.setSystemTime(now)
     const target = now + (2 * 60 * 60 + 15 * 60 + 45) * 1000 // 2h 15m 45s
 
-    render(<CountdownComplex datetime={target} />)
+    render(<Countdown datetime={target} />)
 
     expect(screen.getByTestId('countdown')).toHaveTextContent('2h 15m 45s')
   })
@@ -46,7 +46,7 @@ describe('CountdownComplex', () => {
     vi.setSystemTime(now)
     const target = now + (3 * 24 * 60 * 60 + 5 * 60 * 60) * 1000 // 3 days 5 hours
 
-    render(<CountdownComplex datetime={target} />)
+    render(<Countdown datetime={target} />)
 
     expect(screen.getByTestId('countdown')).toHaveTextContent('3d 5h')
   })
@@ -56,7 +56,7 @@ describe('CountdownComplex', () => {
     vi.setSystemTime(now)
     const target = now - 1000 // 1 second ago
 
-    render(<CountdownComplex datetime={target} />)
+    render(<Countdown datetime={target} />)
 
     expect(screen.getByTestId('countdown')).toHaveTextContent('0s')
   })
@@ -66,7 +66,7 @@ describe('CountdownComplex', () => {
     vi.setSystemTime(now)
     const target = now + 10000 // 10 seconds
 
-    render(<CountdownComplex datetime={target} />)
+    render(<Countdown datetime={target} />)
 
     expect(screen.getByTestId('countdown')).toHaveTextContent('10s')
 
@@ -94,7 +94,7 @@ describe('CountdownComplex', () => {
     vi.setSystemTime(now)
     const target = now + 30000
 
-    render(<CountdownComplex datetime={target} size="xl" />)
+    render(<Countdown datetime={target} size="xl" />)
 
     expect(screen.getByTestId('countdown')).toHaveStyle({ fontSize: '1.5rem' })
   })
@@ -104,7 +104,7 @@ describe('CountdownComplex', () => {
     vi.setSystemTime(now)
     const target = now + 30000
 
-    render(<CountdownComplex datetime={target} color="red" />)
+    render(<Countdown datetime={target} color="red" />)
 
     expect(screen.getByTestId('countdown').style.color).toBe('red')
   })
@@ -114,7 +114,7 @@ describe('CountdownComplex', () => {
     vi.setSystemTime(now)
     const target = now + 30000
 
-    render(<CountdownComplex datetime={target} className="custom-class" />)
+    render(<Countdown datetime={target} className="custom-class" />)
 
     expect(screen.getByTestId('countdown')).toHaveClass('custom-class')
   })
@@ -125,7 +125,7 @@ describe('CountdownComplex', () => {
     const target = now + 30000 // 30 seconds
 
     render(
-      <CountdownComplex
+      <Countdown
         datetime={target}
         size="m"
         color="green"
@@ -148,7 +148,7 @@ describe('CountdownComplex', () => {
     const target = now + 5000 // 5 seconds
 
     render(
-      <CountdownComplex
+      <Countdown
         datetime={target}
         size="m"
         color="green"
@@ -171,7 +171,7 @@ describe('CountdownComplex', () => {
     const target = now + 120000 // 120 seconds
 
     render(
-      <CountdownComplex
+      <Countdown
         datetime={target}
         size="m"
         color="green"
@@ -194,7 +194,7 @@ describe('CountdownComplex', () => {
     const target = now + 65000 // 65 seconds
 
     render(
-      <CountdownComplex
+      <Countdown
         datetime={target}
         size="m"
         color="green"
@@ -236,7 +236,7 @@ describe('CountdownComplex', () => {
 
     const cancelSpy = vi.spyOn(globalThis, 'cancelAnimationFrame')
 
-    const { unmount } = render(<CountdownComplex datetime={target} />)
+    const { unmount } = render(<Countdown datetime={target} />)
 
     unmount()
 

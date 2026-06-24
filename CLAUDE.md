@@ -4,35 +4,54 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-React + Vite + React Router v7 (Framework mode) + Storybook 10 demo project.
+`storybook-addon-chronokit` — a Storybook 10 addon for mocking time in stories. The
+core is a preview decorator (`mockDateDecorator`) that replaces the global `Date` (and
+`setTimeout`/`setInterval`/`requestAnimationFrame`) so stories can freeze time, let it
+progress, or run a sped-up clock. The `Countdown` and `FlashSale` components are demo
+fixtures that exercise the addon.
 
 ## Tech Stack
 
 - **React 19** with TypeScript
-- **Vite 6** as build tool
-- **React Router v7** in Framework mode (file-based routing)
-- **Storybook 10** with interactions and Vitest addon (no docs/MDX)
-- **Vitest** for unit testing
+- **Storybook 10** (`@storybook/react-vite`) with the a11y and Vitest addons
+- **Vitest** for unit tests and Storybook component tests (Playwright browser mode)
 - **Biome** for linting and formatting
 
 ## Project Structure
 
-- `src/` - All source code
-  - `app/` - React Router routes and layouts
-    - `root.tsx` - Root layout
-    - `routes/` - File-based routes
-    - `routes.ts` - Route configuration
-  - `components/` - UI components with stories and tests
-- `.storybook/` - Storybook configuration
-- `tests/` - Test setup files
+The addon and the demo are kept in separate spaces so it's clear what ships:
+
+- `src/addon/` - **the chronokit addon** (the publishable surface)
+  - `mockDateDecorator.ts` - the date/time mocking decorator + `date` parameter type
+  - `index.ts` - public entry point
+- `src/demo/` - **example code, NOT part of the addon**
+  - `FlashSale.tsx` - real-world showcase (static + dynamic time)
+  - `Countdown.tsx` - countdown demo component (requestAnimationFrame-based), stories, tests
+  - `datetime.ts` - time-remaining calculation helper
+- `.storybook/` - Storybook config; `preview.tsx` registers the decorator globally
+- `tests/` - test setup files
+
+## The `date` parameter
+
+Stories control mocked time via the `date` story parameter (typed in `mockDateDecorator.ts`):
+
+```ts
+parameters: {
+  date: {
+    now: new Date('2025-01-15T12:00:00').getTime(),
+    canProgress: true, // false = frozen clock
+    clockSpeed: 20,     // optional real-time multiplier
+  },
+}
+```
 
 ## Import Alias
 
 Use `@/` to reference the `src/` directory:
 
 ```ts
-import { Counter } from '@/components'
-import { CountdownSimple } from '@/components/CountdownSimple'
+import { mockDateDecorator } from '@/addon'
+import { Countdown } from '@/demo/Countdown'
 ```
 
 ## Code Style
@@ -62,8 +81,6 @@ export function MyComponent() {
 
 ## Commands
 
-- `npm run dev` - Start React Router dev server (port 5173)
-- `npm run build` - Build for production
 - `npm run storybook` - Start Storybook (port 6006)
 - `npm run build-storybook` - Build Storybook
 - `npm run test` - Run Vitest in watch mode
@@ -80,11 +97,10 @@ Always ensure the following pass before finishing:
 ```bash
 npm run check      # Linting and formatting
 npm run typecheck  # TypeScript errors
-npm run test:run   # Unit tests
+npm run test:run   # Unit + Storybook tests
 ```
 
 ## Notes
 
-- Storybook uses a separate Vite config (`.storybook/vite.config.ts`) to avoid conflicts with React Router's Vite plugin
-- Route mocking in stories uses `storybook-addon-remix-react-router`
-- Docs/autodocs are disabled globally via `tags: ['!autodocs']` in preview.ts
+- Docs/autodocs are disabled globally via `tags: ['!autodocs']` in `preview.tsx`
+- Not yet structured for npm publish (no build/`exports`/README) — that work is pending

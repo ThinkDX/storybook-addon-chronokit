@@ -6,13 +6,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-  staticDirs: ['../public'],
-  addons: [
-    '@storybook/addon-vitest',
-    '@storybook/addon-a11y',
-    'storybook-addon-remix-react-router',
-    'msw-storybook-addon',
-  ],
+  addons: ['@storybook/addon-vitest', '@storybook/addon-a11y'],
   framework: '@storybook/react-vite',
   core: {
     builder: {

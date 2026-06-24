@@ -22,11 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": [
-    "vite.config.ts",
-    "vitest.config.ts",
-    "vitest.workspace.ts",
-    "react-router.config.ts",
-    ".storybook/**/*.ts"
-  ]
+  "include": ["vitest.config.ts", ".storybook/**/*.ts", ".storybook/**/*.tsx"]
 }

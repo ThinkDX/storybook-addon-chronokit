@@ -1,13 +1,16 @@
 import type { Decorator } from '@storybook/react-vite'
 import { useEffect, useRef } from 'react'
 
-type MockDateParameters =
+export type MockDateParameters =
   | string
   | number
   | Date
   | {
+      /** The mocked "current" time. */
       now: string | number | Date
+      /** When true the clock advances from `now`; when false it stays frozen. @default false */
       canProgress?: boolean
+      /** Real-time multiplier for the advancing clock (e.g. 20 = 20x faster). @default 1 */
       clockSpeed?: number
     }
 
@@ -108,10 +111,13 @@ function parseDate(date: string | number | Date): number {
 }
 
 function applyMock(dateParam: MockDateParameters) {
-  const { now, canProgress = false, clockSpeed = 1.0 } =
-    typeof dateParam === 'object' && 'now' in dateParam
-      ? dateParam
-      : { now: dateParam }
+  const {
+    now,
+    canProgress = false,
+    clockSpeed = 1.0,
+  } = typeof dateParam === 'object' && 'now' in dateParam
+    ? dateParam
+    : { now: dateParam }
 
   MockDate.mockNow = parseDate(now)
   MockDate.realtimeStart = canProgress ? RealDate.now() : null

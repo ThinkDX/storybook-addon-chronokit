@@ -1,18 +1,24 @@
-import { useEffect, useMemo, useState } from 'react'
-import { calculateTimeRemaining, type TimeRemaining } from '@/utils/datetime'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { calculateTimeRemaining, type TimeRemaining } from './datetime'
 
 export type TextSize = 'xs' | 's' | 'm' | 'l' | 'xl'
 
-export type TimeUnit = 'years' | 'months' | 'days' | 'hours' | 'minutes' | 'seconds'
+export type TimeUnit =
+  | 'years'
+  | 'months'
+  | 'days'
+  | 'hours'
+  | 'minutes'
+  | 'seconds'
 
-export interface ThresholdConfig {
+export type ThresholdConfig = {
   threshold: number
   size?: TextSize
   className?: string
   color?: string
 }
 
-export interface CountdownSimpleProps {
+export type CountdownProps = {
   datetime: number
   size?: TextSize
   color?: string
@@ -30,27 +36,41 @@ const SIZE_STYLES: Record<TextSize, string> = {
   xl: '1.5rem',
 }
 
-export function CountdownSimple({
+export function Countdown({
   datetime,
   size = 'm',
   color,
   className,
   thresholdProps,
   lowestUnit = 'seconds',
-}: CountdownSimpleProps) {
+}: CountdownProps) {
   const [timeRemaining, setTimeRemaining] = useState<TimeRemaining>(() =>
     calculateTimeRemaining(datetime),
   )
+  const rafIdRef = useRef<number | null>(null)
+  const lastSecondsRef = useRef<number>(timeRemaining.totalSeconds)
 
-  useEffect(() => {
-    const updateCountdown = () => {
-      setTimeRemaining(calculateTimeRemaining(datetime))
+  const updateCountdown = useCallback(() => {
+    const newTime = calculateTimeRemaining(datetime)
+
+    // Only update state when seconds change to avoid unnecessary re-renders
+    if (newTime.totalSeconds !== lastSecondsRef.current) {
+      lastSecondsRef.current = newTime.totalSeconds
+      setTimeRemaining(newTime)
     }
 
-    const intervalId = setInterval(updateCountdown, 1000)
-
-    return () => clearInterval(intervalId)
+    rafIdRef.current = requestAnimationFrame(updateCountdown)
   }, [datetime])
+
+  useEffect(() => {
+    rafIdRef.current = requestAnimationFrame(updateCountdown)
+
+    return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current)
+      }
+    }
+  }, [updateCountdown])
 
   const matchingThreshold = useMemo(
     () => findMatchingThreshold(timeRemaining.totalSeconds, thresholdProps),
@@ -82,7 +102,6 @@ function findMatchingThreshold(
   if (!thresholdProps) return undefined
 
   const entries = Object.values(thresholdProps)
-  // Find thresholds greater than remaining time, then pick the smallest
   const validThresholds = entries.filter(
     (config) => config.threshold > totalSeconds,
   )
