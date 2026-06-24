@@ -6,6 +6,8 @@ screenshot, or **fast-forwarded** so a minutes-long flow plays out in seconds.
 
 **▶︎ Live demo & docs: https://thinkdx.github.io/storybook-addon-chronokit/**
 
+![A flash-sale banner counting down through its warning and critical states and expiring in seconds, driven by a mocked clock running 30× real time](assets/flash-sale.gif)
+
 It's a single preview decorator driven by one story parameter:
 
 ```ts
