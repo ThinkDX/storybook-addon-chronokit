@@ -11,7 +11,10 @@ const SALE_START = new Date('2025-06-01T12:00:00').getTime()
 const meta = {
   title: 'Demo/FlashSale',
   component: FlashSale,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: { story: { height: '320px' } },
+  },
 } satisfies Meta<typeof FlashSale>
 
 export default meta

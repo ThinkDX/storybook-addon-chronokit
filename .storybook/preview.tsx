@@ -11,6 +11,13 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    docs: {
+      // Each embedded story renders in its own iframe. The mock decorator
+      // replaces the global Date/timers, so multiple inline examples on one
+      // docs page would share (and clobber) a single clock. Separate iframes
+      // give each example its own globals and an isolated mocked clock.
+      story: { inline: false },
+    },
     options: {
       storySort: {
         order: [

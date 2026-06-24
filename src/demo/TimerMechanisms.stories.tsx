@@ -16,6 +16,7 @@ const meta = {
     layout: 'centered',
     // Default: clock runs at 5x so the stopwatches visibly climb.
     date: { now: BASE_TIME, canProgress: true, clockSpeed: 5 },
+    docs: { story: { height: '220px' } },
   },
 } satisfies Meta<typeof TimerMechanisms>
 

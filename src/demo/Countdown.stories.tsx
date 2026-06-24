@@ -16,6 +16,7 @@ const meta = {
     layout: 'centered',
     // Default: clock advances from `now` at normal speed.
     date: { now: BASE_TIME, canProgress: true },
+    docs: { story: { height: '140px' } },
   },
   argTypes: {
     datetime: {
