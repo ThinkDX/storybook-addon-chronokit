@@ -33,21 +33,38 @@ parameters: {
 | `canProgress` | `boolean \| ((context) => boolean)` | `false` | `false` freezes the clock at `now`; `true` lets it advance. May be a predicate. |
 | `clockSpeed`  | `number`                            | `1`     | Real-time multiplier while progressing — e.g. `30` makes time run 30× faster. |
 
-### `canProgress` as a predicate
+### Recommended setup: static `now` + progress on interactions
 
-Instead of a boolean, `canProgress` can be a function that receives the story
-context and returns a boolean — set it once (e.g. globally in `preview`) rather
-than per story. The common case: let the clock run for stories that have a play
-function, since those usually rely on waits and timers.
+`canProgress` can be a function that receives the story context and returns a
+boolean, so you can set the rule **once globally** instead of per story. The
+recommended default: pin a single canonical `now` (freezing the clock) and let it
+run only for stories that have a play function.
 
 ```ts
-parameters: {
-  date: {
-    now: '2025-06-01T12:00:00',
-    canProgress: (ctx) => !!ctx.playFunction,
+// .storybook/preview.ts
+const STORYBOOK_NOW = new Date('2025-06-01T12:00:00').getTime()
+
+export default {
+  decorators: [mockDateDecorator],
+  parameters: {
+    date: {
+      now: STORYBOOK_NOW,
+      canProgress: (ctx) => !!ctx.playFunction,
+    },
   },
 }
 ```
+
+Why this is a good default:
+
+- **Deterministic snapshots** — every story renders at the same frozen instant,
+  so visual-regression tools (e.g. Chromatic) don't flap on dates, relative
+  timestamps, or "today" highlights.
+- **Interactions still work** — play functions usually rely on waits and timers,
+  so the predicate hands *them* a live clock automatically. No per-story
+  `canProgress: true`.
+
+Any story can still override `now` / `canProgress` / `clockSpeed`.
 
 ## How it behaves
 

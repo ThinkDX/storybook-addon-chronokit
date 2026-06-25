@@ -62,6 +62,37 @@ const preview: Preview = {
 export default preview
 ```
 
+## Recommended setup
+
+The pattern we recommend: register the decorator globally, pin a **single
+canonical `now`**, and let the clock run **only for interactions**:
+
+```ts
+// .storybook/preview.ts
+const STORYBOOK_NOW = new Date('2025-06-01T12:00:00').getTime()
+
+const preview: Preview = {
+  decorators: [mockDateDecorator],
+  parameters: {
+    date: {
+      now: STORYBOOK_NOW,
+      canProgress: (ctx) => !!ctx.playFunction,
+    },
+  },
+}
+```
+
+Why this is a good default:
+
+- **Deterministic snapshots.** Every story renders at the same frozen instant, so
+  visual-regression tools (e.g. Chromatic) stop flapping on dates, relative
+  timestamps, and "today" highlights.
+- **Interactions still work.** Stories with a play function usually rely on waits
+  and timers — the predicate gives *those* a live clock automatically, so you
+  never have to remember `canProgress: true` per story.
+
+Any story can still override `now` / `canProgress` / `clockSpeed` for its own needs.
+
 ## Usage
 
 Control the clock with the `date` parameter on any story, a component's `meta`,
