@@ -1,6 +1,9 @@
 import type { Decorator } from '@storybook/react-vite'
 import { useEffect, useRef } from 'react'
 
+/** The story context Storybook passes to a decorator (second argument). */
+export type MockDateContext = Parameters<Decorator>[1]
+
 export type MockDateParameters =
   | string
   | number
@@ -8,8 +11,17 @@ export type MockDateParameters =
   | {
       /** The mocked "current" time. */
       now: string | number | Date
-      /** When true the clock advances from `now`; when false it stays frozen. @default false */
-      canProgress?: boolean
+      /**
+       * Whether the clock advances from `now` (`true`) or stays frozen (`false`).
+       *
+       * Can also be a function that receives the story context and returns a
+       * boolean, so you can decide per story without setting it everywhere —
+       * e.g. set globally in `preview`:
+       * `canProgress: (ctx) => !!ctx.playFunction` lets the clock run only for
+       * stories that have a play function (which usually rely on waits/timers).
+       * @default false
+       */
+      canProgress?: boolean | ((context: MockDateContext) => boolean)
       /** Real-time multiplier for the advancing clock (e.g. 20 = 20x faster). @default 1 */
       clockSpeed?: number
     }
@@ -110,14 +122,20 @@ function parseDate(date: string | number | Date): number {
   return new RealDate(date).getTime()
 }
 
-function applyMock(dateParam: MockDateParameters) {
+function applyMock(dateParam: MockDateParameters, context: MockDateContext) {
   const {
     now,
-    canProgress = false,
+    canProgress: rawCanProgress = false,
     clockSpeed = 1.0,
   } = typeof dateParam === 'object' && 'now' in dateParam
     ? dateParam
     : { now: dateParam }
+
+  // canProgress may be a predicate over the story context (e.g. "has a play fn").
+  const canProgress =
+    typeof rawCanProgress === 'function'
+      ? rawCanProgress(context)
+      : rawCanProgress
 
   MockDate.mockNow = parseDate(now)
   MockDate.realtimeStart = canProgress ? RealDate.now() : null
@@ -152,9 +170,15 @@ export const mockDateDecorator: Decorator = (Story, context) => {
   const dateParam = context.parameters?.date as MockDateParameters | undefined
   const appliedRef = useRef(false)
 
+  // Hold the latest context in a ref so the re-apply effect can read it without
+  // depending on its identity (the decorator re-runs on every render; depending
+  // on `context` would re-apply the mock each tick and reset a progressing clock).
+  const contextRef = useRef(context)
+  contextRef.current = context
+
   // Apply mock synchronously on first render
   if (dateParam && !appliedRef.current) {
-    applyMock(dateParam)
+    applyMock(dateParam, context)
     appliedRef.current = true
   }
 
@@ -171,7 +195,7 @@ export const mockDateDecorator: Decorator = (Story, context) => {
   // Re-apply if dateParam changes
   useEffect(() => {
     if (dateParam) {
-      applyMock(dateParam)
+      applyMock(dateParam, contextRef.current)
       appliedRef.current = true
     } else if (appliedRef.current) {
       restoreMock()

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, waitFor, within } from 'storybook/test'
 import { Countdown } from './Countdown'
 
 /**
@@ -50,5 +51,29 @@ export const FastForward: Story = {
       warning: { threshold: 180, color: 'orange' },
       critical: { threshold: 60, color: 'red' },
     },
+  },
+}
+
+/**
+ * `canProgress` as a predicate over the story context. Set once (e.g. globally
+ * in `preview`), it lets the clock run only for stories that have a play
+ * function — which usually rely on waits/timers — without flipping it per story.
+ * This story has a play function, so the predicate returns true and the
+ * countdown ticks down; the play below asserts it actually progressed.
+ */
+export const ProgressesDuringPlay: Story = {
+  parameters: {
+    date: { now: BASE_TIME, canProgress: (ctx) => Boolean(ctx.playFunction) },
+  },
+  args: { datetime: BASE_TIME + 5 * 60 * 1000, size: 'xl' },
+  play: async ({ canvasElement }) => {
+    const countdown = within(canvasElement).getByTestId('countdown')
+    const initial = countdown.textContent
+    await waitFor(
+      () => expect(countdown).not.toHaveTextContent(initial ?? ''),
+      {
+        timeout: 4000,
+      },
+    )
   },
 }

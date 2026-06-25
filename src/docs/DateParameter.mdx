@@ -27,11 +27,27 @@ parameters: {
 }
 ```
 
-| Field         | Type                      | Default | Description                                                                 |
-| ------------- | ------------------------- | ------- | --------------------------------------------------------------------------- |
-| `now`         | `string \| number \| Date`| —       | The mocked "current" time. Required.                                        |
-| `canProgress` | `boolean`                 | `false` | `false` freezes the clock at `now`; `true` lets it advance.                 |
-| `clockSpeed`  | `number`                  | `1`     | Real-time multiplier while progressing — e.g. `30` makes time run 30× faster. |
+| Field         | Type                                | Default | Description                                                                 |
+| ------------- | ----------------------------------- | ------- | --------------------------------------------------------------------------- |
+| `now`         | `string \| number \| Date`          | —       | The mocked "current" time. Required.                                        |
+| `canProgress` | `boolean \| ((context) => boolean)` | `false` | `false` freezes the clock at `now`; `true` lets it advance. May be a predicate. |
+| `clockSpeed`  | `number`                            | `1`     | Real-time multiplier while progressing — e.g. `30` makes time run 30× faster. |
+
+### `canProgress` as a predicate
+
+Instead of a boolean, `canProgress` can be a function that receives the story
+context and returns a boolean — set it once (e.g. globally in `preview`) rather
+than per story. The common case: let the clock run for stories that have a play
+function, since those usually rely on waits and timers.
+
+```ts
+parameters: {
+  date: {
+    now: '2025-06-01T12:00:00',
+    canProgress: (ctx) => !!ctx.playFunction,
+  },
+}
+```
 
 ## How it behaves
 

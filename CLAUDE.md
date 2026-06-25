@@ -47,6 +47,8 @@ parameters: {
 }
 ```
 
+`canProgress` may also be a predicate `(context) => boolean` (resolved in `applyMock` against the story context), e.g. `(ctx) => !!ctx.playFunction` to run the clock only for stories with a play function. Read at apply-time via a ref so the re-apply effect doesn't depend on context identity.
+
 ## Import Alias
 
 Use `@/` to reference the `src/` directory:

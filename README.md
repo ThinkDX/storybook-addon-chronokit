@@ -92,11 +92,32 @@ export const FastForward = {
 
 ### The `date` parameter
 
-| Field         | Type                       | Default | Description                                                          |
-| ------------- | -------------------------- | ------- | -------------------------------------------------------------------- |
-| `now`         | `string \| number \| Date` | —       | The mocked "current" time. Required (in object form).                |
-| `canProgress` | `boolean`                  | `false` | `false` freezes the clock at `now`; `true` lets it advance.          |
-| `clockSpeed`  | `number`                   | `1`     | Real-time multiplier while progressing — `30` runs time 30× faster.  |
+| Field         | Type                                       | Default | Description                                                                                |
+| ------------- | ------------------------------------------ | ------- | ------------------------------------------------------------------------------------------ |
+| `now`         | `string \| number \| Date`                 | —       | The mocked "current" time. Required (in object form).                                      |
+| `canProgress` | `boolean \| ((context) => boolean)`        | `false` | `false` freezes the clock at `now`; `true` lets it advance. May be a predicate (see below). |
+| `clockSpeed`  | `number`                                   | `1`     | Real-time multiplier while progressing — `30` runs time 30× faster.                        |
+
+### Deciding `canProgress` per story
+
+`canProgress` can be a function that receives the story context and returns a
+boolean, so you can set the rule **once** instead of per story. A common case:
+stories with a play function usually rely on waits and timers, so you want the
+clock running for those — set this globally in `preview`:
+
+```ts
+const preview: Preview = {
+  decorators: [mockDateDecorator],
+  parameters: {
+    date: {
+      now: '2025-06-01T12:00:00',
+      canProgress: (ctx) => !!ctx.playFunction, // run the clock for play stories
+    },
+  },
+}
+```
+
+Individual stories can still override with an explicit `canProgress: true | false`.
 
 ## Using it in docs (MDX) pages
 
